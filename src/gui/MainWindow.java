@@ -13,17 +13,25 @@ import java.util.ArrayList;
  */
 public class MainWindow extends JFrame {
 
+    private static MainWindow instance = null;
     private static Game gameInstance = null;
 
     private JLabel lblWhoPlays, lblTime, lblScore;
     private JButton[] btnFields;
 
     private char playerMark = 'X';
+    private boolean canPlayerMove = true;
 
+    public static MainWindow getInstance() {
+        if (instance == null) {
+            instance = new MainWindow();
+        }
 
-    public MainWindow() {
+        return instance;
+    }
+
+    private MainWindow() {
         gameInstance = new Game();
-        gameInstance.setViewComponent(this);
 
         this.setTitle("Tic Tac Toe");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,9 +59,9 @@ public class MainWindow extends JFrame {
         this.lblTime = new JLabel("Time XX:XX");
         this.lblScore = new JLabel("Score X:Y");
 
-        this.add("", this.lblWhoPlays);
-        this.add("", this.lblTime);
-        this.add("", this.lblScore);
+        this.add(this.lblWhoPlays);
+        this.add(this.lblTime);
+        this.add(this.lblScore);
 
         this.btnFields = new JButton[9];
 
@@ -82,5 +90,9 @@ public class MainWindow extends JFrame {
 
     public Game getGameInstance() {
         return this.gameInstance;
+    }
+
+    public void setCanPlayerMove(boolean canPlayerMove) {
+        this.canPlayerMove = canPlayerMove;
     }
 }

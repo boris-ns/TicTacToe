@@ -1,6 +1,5 @@
 package main;
 
-import gameLogic.Game;
 import gui.MainWindow;
 
 /**
@@ -9,7 +8,6 @@ import gui.MainWindow;
 public class Program {
 
     public static void main(String[] args) {
-        MainWindow window = new MainWindow();
-        window.getGameInstance().play();
+        MainWindow window = MainWindow.getInstance();
     }
 }

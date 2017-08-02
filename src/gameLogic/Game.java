@@ -11,8 +11,6 @@ public class Game {
     private char[] board;
     private char winner;
 
-    private MainWindow viewComponent;
-
     public Game() {
         this.board = new char[9];
         findFreePositions();
@@ -50,24 +48,18 @@ public class Game {
     }
 
     public void markPosition(int position, char playerMark) {
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), false);
         this.board[position] = playerMark;
-    }
 
-    public void play() {
-        for (int i = 0; i < 9; ++i) {
-            if (isGameOver()) {
-                // TODO: do stuff
-            }
-
-            if (i % 2 == 0) {
-                this.viewComponent.enableFreePositions(findFreePositions(), false);
-            } else {
-                this.viewComponent.enableFreePositions(findFreePositions(), true);
-            }
+        if (isGameOver()) {
+            // TODO: do stuff
+            return;
         }
-    }
+        System.out.println("AI ODIGRA POTEZ");
+        // TODO: AI on move
+        // minimax result call
+        // this.board[aiPosition] = aiMark;
 
-    public void setViewComponent(MainWindow viewComponent) {
-        this.viewComponent = viewComponent;
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
     }
 }
