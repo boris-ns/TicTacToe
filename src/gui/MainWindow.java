@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class MainWindow extends JFrame {
 
     private static MainWindow instance = null;
-    private static Game gameInstance = null;
+    private Game gameInstance = null;
 
     private JLabel lblWhoPlays, lblTime, lblScore;
     private JButton[] btnFields;
@@ -87,9 +87,42 @@ public class MainWindow extends JFrame {
         btnFields[position].setText(Character.toString('O'));
     }
 
+    public void gameOver() {
+        Object[] btnOptions = {"Play again", "Exit"};
+        JPanel panel = new JPanel();
+        String message = null;
+
+        if (this.gameInstance.getWinner() == this.playerMark)
+            message = "YOU WON";
+        else if (this.gameInstance.getWinner() == 'D')
+            message = "DRAW";
+        else
+            message = "YOU LOST";
+
+        panel.add(new JLabel(message));
+
+        int result = JOptionPane.showOptionDialog(null, panel, message,
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, btnOptions, null);
+
+        if (result == JOptionPane.YES_OPTION){
+            this.gameInstance.resetBoard();
+            resetButtons();
+        } else if (result == JOptionPane.NO_OPTION) {
+            System.exit(0);
+        }
+    }
+
     public void enableFreePositions(ArrayList<Integer> freePositions, boolean enable) {
         for (Integer i : freePositions) {
             this.btnFields[i].setEnabled(enable);
+        }
+    }
+
+    private void resetButtons() {
+        for (int i = 0; i < this.btnFields.length; ++i) {
+            this.btnFields[i].setEnabled(true);
+            this.btnFields[i].setText("");
         }
     }
 

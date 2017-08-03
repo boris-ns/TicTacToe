@@ -16,7 +16,7 @@ public class Game {
 
     public Game() {
         this.board = new char[9];
-        this.ai = new Ai(this.board, this, 'O'); // TODO: Da li ce praviti problem ?? Mozda ce game morati preko settera da se postavi
+        this.ai = new Ai(this.board, this, 'O');
     }
 
     public ArrayList<Integer> findFreePositions() {
@@ -70,6 +70,7 @@ public class Game {
 
         if (isGameOver()) {
             System.out.println("GAME OVER");
+            MainWindow.getInstance().gameOver();
             return;
         }
 
@@ -79,11 +80,18 @@ public class Game {
 
         if (isGameOver()) { // TODO: NE DUPLIRAJ KOD    DRY
             System.out.println("GAME OVER");
+            MainWindow.getInstance().gameOver();
             return;
         }
 
 
         MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
+    }
+
+    public void resetBoard() {
+        for (int i = 0; i < this.board.length; ++i) {
+            this.board[i] = Character.MIN_VALUE;
+        }
     }
 
     public char getWinner() {
