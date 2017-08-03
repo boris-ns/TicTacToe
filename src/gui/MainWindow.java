@@ -82,6 +82,11 @@ public class MainWindow extends JFrame {
         }
     }
 
+    public void aiMoved(int position) {
+        btnFields[position].setEnabled(false);
+        btnFields[position].setText(Character.toString('O'));
+    }
+
     public void enableFreePositions(ArrayList<Integer> freePositions, boolean enable) {
         for (Integer i : freePositions) {
             this.btnFields[i].setEnabled(enable);
