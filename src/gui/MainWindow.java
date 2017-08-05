@@ -1,6 +1,8 @@
 package gui;
 
 import gameLogic.Game;
+import main.Constants;
+import main.Utility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,13 +15,14 @@ import java.util.ArrayList;
  */
 public class MainWindow extends JFrame {
 
+    public static char playerMark, opponentMark;
+
     private static MainWindow instance = null;
     private Game gameInstance = null;
 
     private JLabel lblWhoPlays, lblTime, lblScore;
     private JButton[] btnFields;
 
-    private char playerMark = 'X';
     private boolean canPlayerMove = true;
 
     public static MainWindow getInstance() {
@@ -31,11 +34,9 @@ public class MainWindow extends JFrame {
     }
 
     private MainWindow() {
-        gameInstance = new Game();
-
         this.setTitle("Tic Tac Toe");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.setIconImage(); TODO
+        this.setIconImage(Utility.loadImageFromResource("res/tic_tac_toe_logo.png"));
         this.setLocationRelativeTo(null);
         this.setResizable(true);
 
@@ -52,6 +53,9 @@ public class MainWindow extends JFrame {
         initComponents();
 
         this.setVisible(true);
+
+        showWelcomeScreen();
+        gameInstance = new Game();
     }
 
     private void initComponents() {
@@ -84,7 +88,7 @@ public class MainWindow extends JFrame {
 
     public void aiMoved(int position) {
         btnFields[position].setEnabled(false);
-        btnFields[position].setText(Character.toString('O'));
+        btnFields[position].setText(Character.toString(opponentMark));
     }
 
     public void gameOver() {
@@ -113,6 +117,25 @@ public class MainWindow extends JFrame {
         }
     }
 
+    private void showWelcomeScreen() {
+        Object[] btnOptions = {"X", "O"};
+        JPanel panel = new JPanel();
+        String message = "Choose your mark";
+        panel.add(new JLabel(message));
+
+        int result = JOptionPane.showOptionDialog(null, panel, message,
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, btnOptions, null);
+
+        if (result == JOptionPane.YES_OPTION){
+            playerMark = Constants.IKS;
+            opponentMark = Constants.OKS;
+        } else if (result == JOptionPane.NO_OPTION) {
+            playerMark = Constants.OKS;
+            opponentMark = Constants.IKS;
+        }
+    }
+
     public void enableFreePositions(ArrayList<Integer> freePositions, boolean enable) {
         for (Integer i : freePositions) {
             this.btnFields[i].setEnabled(enable);
@@ -126,11 +149,4 @@ public class MainWindow extends JFrame {
         }
     }
 
-    public Game getGameInstance() {
-        return this.gameInstance;
-    }
-
-    public void setCanPlayerMove(boolean canPlayerMove) {
-        this.canPlayerMove = canPlayerMove;
-    }
 }

@@ -1,5 +1,7 @@
 package gameLogic;
 
+import main.Constants;
+
 /**
  * Created by boris on 8/3/17.
  */
@@ -35,7 +37,7 @@ public class Ai {
                 scoreTmp = miniMove().getBestScore();
             }
 
-            this.board[position] = Character.MIN_VALUE;
+            this.board[position] = Constants.EMPTY_SPOT;
 
             if (result.getBestScore() == -1 || scoreTmp > result.getBestScore()) {
                 result.setBestScore(scoreTmp);
@@ -59,7 +61,7 @@ public class Ai {
                 scoreTmp = maxiMove().getBestScore();
             }
 
-            this.board[position] = Character.MIN_VALUE;
+            this.board[position] = Constants.EMPTY_SPOT;
 
             if (result.getBestScore() == -1 || scoreTmp < result.getBestScore()) {
                 result.setBestScore(scoreTmp);
@@ -71,7 +73,7 @@ public class Ai {
     }
 
     private char findOpponentMarker(char mark) {
-        return (mark == 'X') ? 'O' : 'X';
+        return (mark == Constants.IKS) ? Constants.OKS : Constants.IKS;
     }
 
     private int getScore() {

@@ -1,6 +1,8 @@
 package gameLogic;
 
 import gui.MainWindow;
+import main.Constants;
+
 import java.util.ArrayList;
 import java.util.stream.Collector;
 
@@ -16,14 +18,14 @@ public class Game {
 
     public Game() {
         this.board = new char[9];
-        this.ai = new Ai(this.board, this, 'O');
+        this.ai = new Ai(this.board, this, MainWindow.opponentMark);
     }
 
     public ArrayList<Integer> findFreePositions() {
         ArrayList<Integer> freePositions = new ArrayList<Integer>();
 
         for (int i = 0; i < board.length; ++i) {
-            if (this.board[i] == Character.MIN_VALUE) {
+            if (this.board[i] == Constants.EMPTY_SPOT) {
                 freePositions.add(i);
             }
         }
@@ -33,7 +35,7 @@ public class Game {
 
     private boolean isItDraw() {
         for (int i = 0; i < this.board.length; ++i) {
-            if (this.board[i] == Character.MIN_VALUE) {
+            if (this.board[i] == Constants.EMPTY_SPOT) {
                 return false;
             }
         }
@@ -45,12 +47,12 @@ public class Game {
         int[][] winningPositions = {{0,1,2}, {3,4,5}, {6,7,8}, {0,4,8}, {2,4,6}, {0,3,6}, {1,4,7}, {2,5,8}};
 
         if (isItDraw()) {
-            this.winner = 'D';
+            this.winner = Constants.DRAW;
             return true;
         }
 
         for (int i = 0; i < winningPositions.length; ++i) {
-            if (board[winningPositions[i][0]] == Character.MIN_VALUE)
+            if (board[winningPositions[i][0]] == Constants.EMPTY_SPOT)
                 continue;
 
             if (board[winningPositions[i][0]] == board[winningPositions[i][1]] &&
@@ -69,7 +71,6 @@ public class Game {
         this.board[position] = playerMark;
 
         if (isGameOver()) {
-            System.out.println("GAME OVER");
             MainWindow.getInstance().gameOver();
             return;
         }
@@ -78,19 +79,17 @@ public class Game {
         this.board[aiPosition] = ai.getPlayerMark();
         MainWindow.getInstance().aiMoved(aiPosition);
 
-        if (isGameOver()) { // TODO: NE DUPLIRAJ KOD    DRY
-            System.out.println("GAME OVER");
+        if (isGameOver()) {
             MainWindow.getInstance().gameOver();
             return;
         }
-
 
         MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
     }
 
     public void resetBoard() {
         for (int i = 0; i < this.board.length; ++i) {
-            this.board[i] = Character.MIN_VALUE;
+            this.board[i] = Constants.EMPTY_SPOT;
         }
     }
 
