@@ -21,6 +21,8 @@ public class Game {
         this.player2Mark = opponentMark;
         this.board = new char[9];
         this.ai = new Ai(this.board, this, this.player2Mark);
+
+        determineIfAiPlaysFirst();
     }
 
     public void playerMoved(int position) {
@@ -42,10 +44,23 @@ public class Game {
         MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
     }
 
+    private void determineIfAiPlaysFirst() {
+        if (this.player2Mark == Constants.IKS)
+            aiPlaysFirst();
+    }
+
     private void aiPlaying() {
         int aiMovePosition = ai.move();
         this.board[aiMovePosition] = ai.getPlayerMark();
         MainWindow.getInstance().markButton(aiMovePosition, ai.getPlayerMark(), player1Mark);
+    }
+
+    private void aiPlaysFirst() {
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), false);
+        int aiMovePosition = ai.move();
+        this.board[aiMovePosition] = ai.getPlayerMark();
+        MainWindow.getInstance().markButton(aiMovePosition, ai.getPlayerMark(), player1Mark);
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
     }
 
     private void prepareForNewGame() {
@@ -55,6 +70,7 @@ public class Game {
         this.player1Mark = this.player2Mark;
         this.player2Mark = tmp;
         MainWindow.getInstance().setTextLblWhoPlays(player1Mark);
+        determineIfAiPlaysFirst();
     }
 
     public ArrayList<Integer> findFreePositions() {

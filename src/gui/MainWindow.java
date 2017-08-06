@@ -21,7 +21,7 @@ public class MainWindow extends JFrame {
     private JLabel lblWhoPlays, lblTime, lblScore;
     private JButton[] btnFields;
 
-    private char playerMark, opponentMark;
+    private static char playerMark, opponentMark;
 
     public static MainWindow getInstance() {
         if (instance == null) {
@@ -29,6 +29,10 @@ public class MainWindow extends JFrame {
         }
 
         return instance;
+    }
+
+    public static void startGame() {
+        getInstance().gameInstance = new Game(playerMark, opponentMark);
     }
 
     private MainWindow() {
@@ -46,7 +50,6 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
 
         showWelcomeScreen();
-        gameInstance = new Game(playerMark, opponentMark);
     }
 
     private void setWindowLocation() {
