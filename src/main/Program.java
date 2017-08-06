@@ -1,5 +1,6 @@
 package main;
 
+import gameLogic.Game;
 import gui.MainWindow;
 
 /**

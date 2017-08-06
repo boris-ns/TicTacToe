@@ -15,15 +15,13 @@ import java.util.ArrayList;
  */
 public class MainWindow extends JFrame {
 
-    public static char playerMark, opponentMark;
-
     private static MainWindow instance = null;
     private Game gameInstance = null;
 
     private JLabel lblWhoPlays, lblTime, lblScore;
     private JButton[] btnFields;
 
-    private boolean canPlayerMove = true;
+    private char playerMark, opponentMark;
 
     public static MainWindow getInstance() {
         if (instance == null) {
@@ -37,25 +35,25 @@ public class MainWindow extends JFrame {
         this.setTitle("Tic Tac Toe");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(Utility.loadImageFromResource("res/tic_tac_toe_logo.png"));
-        this.setLocationRelativeTo(null);
         this.setResizable(true);
-
-        Dimension dimension = new Dimension(500, 500);
-        this.setMinimumSize(dimension);
+        this.setMinimumSize(new Dimension(500, 500));
         this.pack();
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
-        Point newLocation = new Point(middle.x - (this.getWidth() / 2), middle.y - (this.getHeight() / 2));
-        this.setLocation(newLocation);
-
+        setWindowLocation();
         this.setLayout(new GridLayout(4, 3));
+
         initComponents();
 
         this.setVisible(true);
 
         showWelcomeScreen();
-        gameInstance = new Game();
+        gameInstance = new Game(playerMark, opponentMark);
+    }
+
+    private void setWindowLocation() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
+        Point newLocation = new Point(middle.x - (this.getWidth() / 2), middle.y - (this.getHeight() / 2));
+        this.setLocation(newLocation);
     }
 
     private void initComponents() {
@@ -74,11 +72,11 @@ public class MainWindow extends JFrame {
             int finalI = i;
 
             this.btnFields[i].addActionListener(new ActionListener() {
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    btnFields[finalI].setEnabled(false);
-                    btnFields[finalI].setText(Character.toString(playerMark));
-                    gameInstance.markPosition(finalI, playerMark);
+                    markButton(finalI, gameInstance.getPlayer1Mark(), gameInstance.getPlayer2Mark());
+                    gameInstance.playerMoved(finalI);
                 }
             });
 
@@ -86,26 +84,24 @@ public class MainWindow extends JFrame {
         }
     }
 
-    public void aiMoved(int position) {
+    public void markButton(int position, char player1Mark, char player2Mark) {
         btnFields[position].setEnabled(false);
-        btnFields[position].setText(Character.toString(opponentMark));
+        btnFields[position].setText(Character.toString(player1Mark));
+        btnFields[position].setFont(new Font("Arial Black", Font.PLAIN, 50));
+        setTextLblWhoPlays(player2Mark);
     }
 
-    public void gameOver() {
+    public void setTextLblWhoPlays(char mark) {
+        this.lblWhoPlays.setText("On move: " + mark);
+    }
+
+    public void showGameOverScreen() {
         Object[] btnOptions = {"Play again", "Exit"};
         JPanel panel = new JPanel();
-        String message = null;
 
-        if (this.gameInstance.getWinner() == this.playerMark)
-            message = "YOU WON";
-        else if (this.gameInstance.getWinner() == 'D')
-            message = "DRAW";
-        else
-            message = "YOU LOST";
+        panel.add(new JLabel(getResultMessage()));
 
-        panel.add(new JLabel(message));
-
-        int result = JOptionPane.showOptionDialog(null, panel, message,
+        int result = JOptionPane.showOptionDialog(null, panel, "Game over",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, btnOptions, null);
 
@@ -115,6 +111,15 @@ public class MainWindow extends JFrame {
         } else if (result == JOptionPane.NO_OPTION) {
             System.exit(0);
         }
+    }
+
+    private String getResultMessage() {
+        if (this.gameInstance.getWinner() == this.gameInstance.getPlayer1Mark())
+            return "You won!";
+        else if (this.gameInstance.getWinner() == Constants.DRAW)
+            return "Draw.";
+        else
+            return "You lost.";
     }
 
     private void showWelcomeScreen() {

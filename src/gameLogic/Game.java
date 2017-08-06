@@ -4,7 +4,6 @@ import gui.MainWindow;
 import main.Constants;
 
 import java.util.ArrayList;
-import java.util.stream.Collector;
 
 /**
  * Created by boris on 8/1/17.
@@ -13,34 +12,61 @@ public class Game {
 
     private char[] board;
     private char winner;
+    private char player1Mark, player2Mark;
 
     private Ai ai;
 
-    public Game() {
+    public Game(char playerMark, char opponentMark) {
+        this.player1Mark = playerMark;
+        this.player2Mark = opponentMark;
         this.board = new char[9];
-        this.ai = new Ai(this.board, this, MainWindow.opponentMark);
+        this.ai = new Ai(this.board, this, this.player2Mark);
+    }
+
+    public void playerMoved(int position) {
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), false);
+        this.board[position] = this.player1Mark;
+
+        if (isGameOver()) {
+            prepareForNewGame();
+            return;
+        }
+
+        aiPlaying();
+
+        if (isGameOver()) { // TODO: Try to avoid these duplicate blocs of code. How ???
+            prepareForNewGame();
+            return;
+        }
+
+        MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
+    }
+
+    private void aiPlaying() {
+        int aiMovePosition = ai.move();
+        this.board[aiMovePosition] = ai.getPlayerMark();
+        MainWindow.getInstance().markButton(aiMovePosition, ai.getPlayerMark(), player1Mark);
+    }
+
+    private void prepareForNewGame() {
+        MainWindow.getInstance().showGameOverScreen();
+        ai.setPlayerMark(player1Mark);
+        char tmp = player1Mark;
+        this.player1Mark = this.player2Mark;
+        this.player2Mark = tmp;
+        MainWindow.getInstance().setTextLblWhoPlays(player1Mark);
     }
 
     public ArrayList<Integer> findFreePositions() {
         ArrayList<Integer> freePositions = new ArrayList<Integer>();
 
-        for (int i = 0; i < board.length; ++i) {
+        for (int i = 0; i < this.board.length; ++i) {
             if (this.board[i] == Constants.EMPTY_SPOT) {
                 freePositions.add(i);
             }
         }
 
         return freePositions;
-    }
-
-    private boolean isItDraw() {
-        for (int i = 0; i < this.board.length; ++i) {
-            if (this.board[i] == Constants.EMPTY_SPOT) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public boolean isGameOver() {
@@ -66,25 +92,14 @@ public class Game {
         return false;
     }
 
-    public void markPosition(int position, char playerMark) {
-        MainWindow.getInstance().enableFreePositions(findFreePositions(), false);
-        this.board[position] = playerMark;
-
-        if (isGameOver()) {
-            MainWindow.getInstance().gameOver();
-            return;
+    private boolean isItDraw() {
+        for (int i = 0; i < this.board.length; ++i) {
+            if (this.board[i] == Constants.EMPTY_SPOT) {
+                return false;
+            }
         }
 
-        int aiPosition = ai.move();
-        this.board[aiPosition] = ai.getPlayerMark();
-        MainWindow.getInstance().aiMoved(aiPosition);
-
-        if (isGameOver()) {
-            MainWindow.getInstance().gameOver();
-            return;
-        }
-
-        MainWindow.getInstance().enableFreePositions(findFreePositions(), true);
+        return true;
     }
 
     public void resetBoard() {
@@ -95,5 +110,13 @@ public class Game {
 
     public char getWinner() {
         return this.winner;
+    }
+
+    public char getPlayer1Mark() {
+        return this.player1Mark;
+    }
+
+    public char getPlayer2Mark() {
+        return this.player2Mark;
     }
 }

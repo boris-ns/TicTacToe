@@ -88,4 +88,8 @@ public class Ai {
     public char getPlayerMark() {
         return this.playerMark;
     }
+
+    public void setPlayerMark(char playerMark) {
+        this.playerMark = playerMark;
+    }
 }
